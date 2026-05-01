@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parry Sound High School Cafeteria</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --red:        #CC0000;
+            --red-dark:   #990000;
+            --red-light:  #ff4444;
+            --white:      #ffffff;
+            --black:      #0d0d0d;
+            --gray-light: #f5f5f5;
+            --gray:       #e0e0e0;
+            --gray-mid:   #aaaaaa;
+            --gray-dark:  #555555;
+            --shadow:     0 4px 24px rgba(0,0,0,0.14);
+            --shadow-sm:  0 2px 10px rgba(0,0,0,0.08);
+            --radius:     10px;
+            --radius-lg:  16px;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--gray-light);
+            color: var(--black);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ── Header ───────────────────────────────────────── */
+        header {
+            background: var(--black);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 68px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo-icon img {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .logo-text h1 {
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+
+        .logo-text span {
+            font-size: 0.68rem;
+            color: var(--gray-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+        }
+
+        nav {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .nav-btn {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid transparent;
+            padding: 0.48rem 1.15rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-btn:hover { border-color: var(--red); color: var(--red-light); }
+        .nav-btn.active { background: var(--red); border-color: var(--red); }
+
+        /* ── Hero ─────────────────────────────────────────── */
+        .hero {
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a0000 45%, #660000 100%);
+            color: var(--white);
+            text-align: center;
+            padding: 4rem 1.5rem 3.5rem;
+        }
+
+        .hero-logo {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+            margin-bottom: 1rem;
+            opacity: 0.92;
+        }
+
+        .hero-eyebrow {
+            display: inline-block;
+            background: var(--red);
+            color: var(--white);
+            padding: 0.3rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.1rem;
+        }
+
+        .hero h2 {
+            font-size: clamp(2rem, 5.5vw, 3.6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 0.85rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h2 em {
+            color: var(--red-light);
+            font-style: normal;
+        }
+
+        .hero p {
+            font-size: 1.05rem;
+            opacity: 0.78;
+            max-width: 460px;
+            margin: 0 auto;
+        }
+
+        /* ── Main ─────────────────────────────────────────── */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.75rem 1.5rem 4rem;
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* ── Section Header ───────────────────────────────── */
+        .section-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--black);
+            letter-spacing: -0.02em;
+        }
+
+        .section-header h2 em {
+            color: var(--red);
+            font-style: normal;
+        }
+
+        .section-header p {
+            color: var(--gray-dark);
+            font-size: 0.95rem;
+            margin-top: 0.35rem;
+        }
+
+        .section-divider {
+            width: 52px;
+            height: 4px;
+            background: var(--red);
+            border-radius: 2px;
+            margin: 0.85rem auto 0;
+        }
+
+        /* ── Day Tabs ─────────────────────────────────────── */
+        .day-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .day-tabs::-webkit-scrollbar { display: none; }
+
+        .day-tab {
+            flex-shrink: 0;
+            background: var(--white);
+            border: 2px solid var(--gray);
+            color: var(--black);
+            padding: 0.6rem 1.4rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+
+        .day-tab:hover { border-color: var(--red); color: var(--red); }
+        .day-tab.active { background: var(--red); border-color: var(--red); color: var(--white); }
+
+        /* ── Menu Grid ────────────────────────────────────── */
+        .menu-day { display: none; }
+
+        .menu-day.active {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 1.5rem;
+            animation: fadeUp 0.25s ease;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Meal Card ────────────────────────────────────── */
+        .meal-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .card-stripe {
+            height: 5px;
+            background: var(--red);
+        }
+
+        .card-body {
+            padding: 1.4rem 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meal-tag {
+            display: inline-block;
+            background: #fff0f0;
+            color: var(--red);
+            border: 1px solid #ffcccc;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.18rem 0.55rem;
+            border-radius: 4px;
+            margin-bottom: 0.7rem;
+        }
+
+        .meal-name {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--black);
+            margin-bottom: 0.45rem;
+            line-height: 1.25;
+        }
+
+        .meal-desc {
+            font-size: 0.85rem;
+            color: var(--gray-dark);
+            line-height: 1.55;
+            flex: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray);
+        }
+
+        .meal-price {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--red);
+        }
+
+        .quick-order-btn {
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            padding: 0.48rem 1.1rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.18s;
+            letter-spacing: 0.03em;
+        }
+
+        .quick-order-btn:hover { background: var(--red); }
+
+        /* ── Preorder Section ─────────────────────────────── */
+        .preorder-wrap {
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .form-card-head {
+            background: var(--red);
+            color: var(--white);
+            padding: 1.5rem 2rem;
+        }
+
+        .form-card-head h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .form-card-head p {
+            font-size: 0.83rem;
+            opacity: 0.82;
+            margin-top: 0.2rem;
+        }
+
+        .form-body { padding: 2rem; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group { margin-bottom: 1.2rem; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--black);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.72rem 1rem;
+            border: 2px solid var(--gray);
+            border-radius: 8px;
+            font-size: 0.92rem;
+            color: var(--black);
+            background: var(--white);
+            transition: border-color 0.18s, box-shadow 0.18s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(204,0,0,0.1);
+        }
+
+        .form-control.error { border-color: var(--red-light); }
+
+        select.form-control {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23666' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.9rem center;
+            padding-right: 2.4rem;
+            cursor: pointer;
+        }
+
+        select.form-control:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .err-msg {
+            color: var(--red);
+            font-size: 0.76rem;
+            font-weight: 600;
+            margin-top: 0.28rem;
+            display: none;
+        }
+
+        .err-msg.show { display: block; }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--red);
+            color: var(--white);
+            border: none;
+            padding: 0.95rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.18s, transform 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin-top: 0.4rem;
+        }
+
+        .submit-btn:hover { background: var(--red-dark); }
+        .submit-btn:active { transform: scale(0.98); }
+
+        /* ── Confirmation ─────────────────────────────────── */
+        .confirmation {
+            display: none;
+            text-align: center;
+            padding: 2.5rem 2rem 2rem;
+            animation: fadeUp 0.3s ease;
+        }
+
+        .confirmation.show { display: block; }
+
+        .confirm-check {
+            width: 70px;
+            height: 70px;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.4rem;
+            font-size: 2rem;
+            color: var(--white);
+            box-shadow: 0 4px 20px rgba(204,0,0,0.35);
+        }
+
+        .confirmation h3 {
+            font-size: 1.55rem;
+            font-weight: 900;
+            color: var(--black);
+            margin-bottom: 0.3rem;
+        }
+
+        .confirmation > p {
+            color: var(--gray-dark);
+            font-size: 0.875rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .confirm-table {
+            background: var(--gray-light);
+            border-radius: var(--radius);
+            overflow: hidden;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .confirm-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--gray);
+            gap: 1rem;
+        }
+
+        .confirm-row:last-child { border-bottom: none; }
+
+        .confirm-label {
+            color: var(--gray-dark);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            flex-shrink: 0;
+        }
+
+        .confirm-value {
+            color: var(--black);
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-align: right;
+        }
+
+        .confirm-value.red { color: var(--red); }
+
+        .reset-btn {
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            padding: 0.72rem 1.8rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.18s;
+        }
+
+        .reset-btn:hover { background: var(--red); }
+
+        /* ── Info / Nutrition Section ────────────────────── */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.75rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .info-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .info-card:hover { box-shadow: var(--shadow); }
+
+        .info-card-head {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 1.25rem 1.5rem;
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
+        .info-card-head h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .info-card-head p {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 0.1rem;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0.75rem 0;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .info-item:last-child { border-bottom: none; }
+
+        .info-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--red);
+            border-radius: 50%;
+            margin-top: 0.45rem;
+            flex-shrink: 0;
+        }
+
+        .info-item-content { flex: 1; }
+
+        .info-meal-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--black);
+        }
+
+        .info-meal-day {
+            font-size: 0.75rem;
+            color: var(--gray-dark);
+            margin-top: 0.1rem;
+        }
+
+        .info-meal-note {
+            font-size: 0.75rem;
+            color: var(--red);
+            font-weight: 600;
+            margin-top: 0.15rem;
+        }
+
+        .info-disclaimer {
+            background: var(--white);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--red);
+            padding: 1rem 1.25rem;
+            font-size: 0.82rem;
+            color: var(--gray-dark);
+            line-height: 1.6;
+        }
+
+        .info-disclaimer strong { color: var(--black); }
+
+        /* ── Sides & Drinks ─────────────────────────────── */
+        .sides-section { margin-top: 2.25rem; }
+
+        .sides-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--gray-dark);
+            margin-bottom: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sides-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gray);
+        }
+
+        .sides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 0.85rem;
+        }
+
+        .side-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 0.9rem 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            border-left: 4px solid var(--gray);
+            transition: border-color 0.18s, box-shadow 0.18s;
+        }
+
+        .side-card:hover { border-color: var(--red); box-shadow: var(--shadow); }
+
+        .side-card-name { font-size: 0.88rem; font-weight: 700; color: var(--black); }
+        .side-card-desc { font-size: 0.72rem; color: var(--gray-dark); margin-top: 0.1rem; }
+        .side-card-price { font-size: 1.05rem; font-weight: 900; color: var(--red); flex-shrink: 0; }
+
+        /* ── Make it a Meal Tab ──────────────────────────── */
+        .meal-deal-tab {
+            background: #ffd966 !important;
+            border-color: #e6c200 !important;
+            color: #3a1a00 !important;
+            font-weight: 800 !important;
+        }
+
+        .meal-deal-tab:hover { background: #ffec99 !important; }
+
+        .meal-deal-tab.active {
+            background: #b8860b !important;
+            border-color: #b8860b !important;
+            color: var(--white) !important;
+        }
+
+        /* ── Combo Builder ───────────────────────────────── */
+        .combo-hero {
+            background: linear-gradient(135deg, #0d0d0d 0%, #2a1500 100%);
+            border-radius: var(--radius-lg);
+            padding: 2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .combo-hero-center { flex: 1; }
+
+        .combo-hero-price {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            color: #ffd966;
+            line-height: 1;
+        }
+
+        .combo-hero h3 {
+            color: var(--white);
+            font-size: 1.05rem;
+            font-weight: 700;
+            opacity: 0.85;
+            margin-bottom: 0.4rem;
+        }
+
+        .combo-hero p {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+        }
+
+        .combo-includes {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .combo-pill {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8);
+            border-radius: 50px;
+            padding: 0.3rem 0.85rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .combo-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .combo-step-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .combo-step-head {
+            background: var(--black);
+            color: var(--white);
+            padding: 0.85rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .combo-step-num {
+            width: 26px;
+            height: 26px;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.78rem;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .combo-step-head h4 { font-size: 0.88rem; font-weight: 700; }
+
+        .combo-step-body { padding: 1.1rem; }
+
+        .combo-drink-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+
+        .combo-drink-btn {
+            border: 2px solid var(--gray);
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 0.9rem 0.5rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.18s;
+            width: 100%;
+        }
+
+        .combo-drink-btn:hover:not(.active) { border-color: var(--red); background: #fff8f8; }
+        .combo-drink-btn.active { background: var(--red); border-color: var(--red); color: var(--white); }
+
+        .combo-drink-icon { font-size: 1.5rem; display: block; margin-bottom: 0.25rem; }
+        .combo-drink-name { font-size: 0.78rem; font-weight: 700; display: block; }
+        .combo-drink-price { font-size: 0.68rem; opacity: 0.6; display: block; margin-top: 0.1rem; }
+        .combo-drink-btn.active .combo-drink-price { opacity: 0.8; }
+
+        .combo-cookie-box {
+            background: #fffbf0;
+            border: 2px solid #ffd966;
+            border-radius: var(--radius);
+            padding: 1.1rem;
+            text-align: center;
+        }
+
+        .combo-cookie-icon { font-size: 2rem; display: block; margin-bottom: 0.3rem; }
+        .combo-cookie-name { font-size: 0.88rem; font-weight: 800; color: var(--black); }
+        .combo-cookie-sub { font-size: 0.72rem; color: var(--gray-dark); margin-top: 0.15rem; }
+
+        .combo-order-bar {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .combo-order-lhs { flex: 1; min-width: 200px; }
+
+        .combo-order-eyebrow {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--gray-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .combo-order-price {
+            font-size: 2.75rem;
+            font-weight: 900;
+            color: var(--red);
+            line-height: 1;
+        }
+
+        .combo-preview-text {
+            font-size: 0.8rem;
+            color: var(--gray-dark);
+            margin-top: 0.4rem;
+            font-style: italic;
+        }
+
+        .combo-preorder-btn {
+            background: var(--red);
+            color: var(--white);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.18s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .combo-preorder-btn:hover { background: var(--red-dark); }
+
+        .combo-err {
+            color: var(--red);
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .combo-err.show { display: block; }
+
+        /* ── Suggest Nav Button ──────────────────────────── */
+        .suggest-nav-btn { border-color: rgba(255,200,0,0.4); }
+        .suggest-nav-btn:hover { background: #b8860b; border-color: #b8860b; color: var(--white); }
+        .suggest-nav-btn.active { background: #b8860b; border-color: #b8860b; }
+
+        /* ── Cookie Promo Banner ─────────────────────────── */
+        .cookie-promo {
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a0800 60%, #3a1a00 100%);
+            border-radius: var(--radius-lg);
+            padding: 2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .cookie-promo-left { display: flex; align-items: center; gap: 1.25rem; }
+
+        .cookie-emoji {
+            font-size: 3rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .cookie-promo h3 {
+            color: #ffd966;
+            font-size: 1.25rem;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+
+        .cookie-promo p {
+            color: rgba(255,255,255,0.65);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        .cookie-promo-btn {
+            background: #ffd966;
+            color: #0d0d0d;
+            border: none;
+            padding: 0.75rem 1.6rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.18s, transform 0.1s;
+            white-space: nowrap;
+            flex-shrink: 0;
+            letter-spacing: 0.03em;
+        }
+
+        .cookie-promo-btn:hover { background: #ffec99; transform: scale(1.03); }
+
+        /* ── Suggest Section ─────────────────────────────── */
+        .suggest-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 800px) {
+            .suggest-layout { grid-template-columns: 1fr; }
+        }
+
+        .suggest-form-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: sticky;
+            top: 88px;
+        }
+
+        .suggest-form-head {
+            background: #0d0d0d;
+            color: var(--white);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .cookie-big { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+
+        .suggest-form-head h3 {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #ffd966;
+            line-height: 1.2;
+        }
+
+        .suggest-form-head p {
+            font-size: 0.78rem;
+            opacity: 0.6;
+            margin-top: 0.3rem;
+        }
+
+        .suggest-form-body { padding: 1.5rem; }
+
+        .suggest-form-body .form-group { margin-bottom: 1rem; }
+
+        .suggest-submit-btn {
+            width: 100%;
+            background: #b8860b;
+            color: var(--white);
+            border: none;
+            padding: 0.85rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.18s;
+            letter-spacing: 0.04em;
+            margin-top: 0.25rem;
+        }
+
+        .suggest-submit-btn:hover { background: #8b6508; }
+
+        .suggest-success {
+            display: none;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .suggest-success.show { display: block; }
+        .suggest-success .cookie-big { font-size: 3rem; }
+
+        .suggest-success h4 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 0.35rem;
+        }
+
+        .suggest-success p { font-size: 0.85rem; color: var(--gray-dark); }
+
+        .suggest-again-btn {
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            padding: 0.6rem 1.4rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.18s;
+        }
+
+        .suggest-again-btn:hover { background: var(--red); }
+
+        /* ── Suggestions List ────────────────────────────── */
+        .suggestions-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.1rem;
+        }
+
+        .suggestions-header h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--black);
+        }
+
+        .suggestions-header span {
+            font-size: 0.78rem;
+            color: var(--gray-dark);
+            background: var(--gray);
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+            font-weight: 700;
+        }
+
+        .suggestion-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.85rem;
+            transition: box-shadow 0.18s;
+            animation: fadeUp 0.25s ease;
+        }
+
+        .suggestion-card:hover { box-shadow: var(--shadow); }
+
+        .suggestion-card.top-pick {
+            border-left: 4px solid #ffd966;
+            background: linear-gradient(to right, #fffbf0, var(--white));
+        }
+
+        .upvote-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            background: var(--gray-light);
+            border: 2px solid var(--gray);
+            border-radius: 10px;
+            padding: 0.5rem 0.65rem;
+            cursor: pointer;
+            transition: all 0.18s;
+            flex-shrink: 0;
+            min-width: 52px;
+        }
+
+        .upvote-btn:hover:not(.voted) {
+            border-color: var(--red);
+            background: #fff0f0;
+        }
+
+        .upvote-btn.voted {
+            background: var(--red);
+            border-color: var(--red);
+            color: var(--white);
+            cursor: default;
+        }
+
+        .upvote-btn .thumb { font-size: 1.1rem; line-height: 1; }
+        .upvote-btn .vote-count { font-size: 0.78rem; font-weight: 800; }
+        .upvote-btn.voted .vote-count { color: var(--white); }
+
+        .suggestion-content { flex: 1; min-width: 0; }
+
+        .suggestion-meal {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--black);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .suggestion-desc {
+            font-size: 0.8rem;
+            color: var(--gray-dark);
+            margin-top: 0.2rem;
+            line-height: 1.45;
+        }
+
+        .suggestion-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+        }
+
+        .suggestion-author {
+            font-size: 0.72rem;
+            color: var(--gray-mid);
+            font-weight: 600;
+        }
+
+        .top-badge {
+            font-size: 0.65rem;
+            font-weight: 800;
+            background: #ffd966;
+            color: #3a1a00;
+            padding: 0.1rem 0.45rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .empty-suggestions {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray-dark);
+        }
+
+        .empty-suggestions .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+        .empty-suggestions p { font-size: 0.9rem; }
+
+        /* ── Footer ───────────────────────────────────────── */
+        footer {
+            background: var(--black);
+            color: var(--white);
+            text-align: center;
+            padding: 2.2rem 1.5rem;
+        }
+
+        footer p {
+            font-size: 0.83rem;
+            opacity: 0.55;
+            line-height: 1.7;
+        }
+
+        footer strong { color: var(--red-light); opacity: 1; }
+
+        /* ── Responsive ───────────────────────────────────── */
+        @media (max-width: 620px) {
+            .header-inner { padding: 0 1rem; }
+            .logo-text span { display: none; }
+            .nav-btn { padding: 0.42rem 0.85rem; font-size: 0.78rem; }
+            .hero { padding: 2.5rem 1rem 2rem; }
+            main { padding: 1.75rem 1rem 3rem; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+            .form-body { padding: 1.25rem; }
+            .form-card-head { padding: 1.25rem 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════ -->
+<header>
+    <div class="header-inner">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="logo.png" alt="Parry Sound High School Panther logo">
+            </div>
+            <div class="logo-text">
+                <h1>Parry Sound High School</h1>
+                <span>Cafeteria · Fresh Daily</span>
+            </div>
+        </div>
+        <nav>
+            <button class="nav-btn active" id="nav-menu"     onclick="showSection('menu', this)">Menu</button>
+            <button class="nav-btn"        id="nav-preorder" onclick="showSection('preorder', this)">Preorder</button>
+            <button class="nav-btn"        id="nav-info"     onclick="showSection('info', this)">Nutrition</button>
+            <button class="nav-btn suggest-nav-btn" id="nav-suggest" onclick="showSection('suggest', this)">Suggest &#127850;</button>
+        </nav>
+    </div>
+</header>
+
+<!-- ══ HERO ════════════════════════════════════════════════ -->
+<section class="hero">
+    <img src="logo.png" alt="Parry Sound High School Panther" class="hero-logo">
+    <div class="hero-eyebrow">This Week's Menu</div>
+    <h2>Fuel Your <em>School Day</em></h2>
+    <p>Fresh, affordable meals served Monday through Friday at Parry Sound High School. Browse the menu or place a preorder to skip the line.</p>
+</section>
+
+<!-- ══ MAIN ════════════════════════════════════════════════ -->
+<main>
+
+    <!-- ── MENU SECTION ──────────────────────────────────── -->
+    <div id="menu" class="section active">
+        <div class="section-header">
+            <h2>Weekly <em>Menu</em></h2>
+            <p>Select a day to view available meals</p>
+            <div class="section-divider"></div>
+        </div>
+
+        <div class="day-tabs">
+            <button class="day-tab active"  onclick="showDay('monday',    this)">Monday</button>
+            <button class="day-tab"         onclick="showDay('tuesday',   this)">Tuesday</button>
+            <button class="day-tab"         onclick="showDay('wednesday', this)">Wednesday</button>
+            <button class="day-tab"         onclick="showDay('thursday',  this)">Thursday</button>
+            <button class="day-tab"         onclick="showDay('friday',    this)">Friday</button>
+            <button class="day-tab meal-deal-tab" onclick="showDay('meal-deal', this)">&#127850; Make it a Meal</button>
+        </div>
+
+        <!-- Monday -->
+        <div id="monday" class="menu-day active">
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Main Entrée</span>
+                    <h3 class="meal-name">Classic Cheeseburger</h3>
+                    <p class="meal-desc">Juicy beef patty with American cheese, crisp lettuce, tomato, and pickles on a toasted sesame bun. Served with seasoned fries.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.50</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Monday', 'Classic Cheeseburger', '$3.50')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Pasta</span>
+                    <h3 class="meal-name">Pasta Marinara</h3>
+                    <p class="meal-desc">Penne pasta tossed in a rich homemade tomato-basil marinara sauce. Served with a side of warm garlic bread.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.25</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Monday', 'Pasta Marinara', '$3.25')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Vegetarian</span>
+                    <h3 class="meal-name">Garden Salad Bowl</h3>
+                    <p class="meal-desc">Fresh mixed greens topped with cucumber, cherry tomatoes, shredded carrots, and croutons. Choice of ranch or balsamic dressing.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$2.75</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Monday', 'Garden Salad Bowl', '$2.75')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tuesday -->
+        <div id="tuesday" class="menu-day">
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Main Entrée</span>
+                    <h3 class="meal-name">Grilled Chicken Wrap</h3>
+                    <p class="meal-desc">Seasoned grilled chicken breast with shredded lettuce, diced tomatoes, and creamy ranch dressing wrapped in a warm flour tortilla.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.75</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Tuesday', 'Grilled Chicken Wrap', '$3.75')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Comfort Food</span>
+                    <h3 class="meal-name">Macaroni &amp; Cheese</h3>
+                    <p class="meal-desc">Creamy homestyle macaroni and cheese baked to perfection with a golden breadcrumb topping. Served with a side of sweet corn.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.00</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Tuesday', 'Macaroni &amp; Cheese', '$3.00')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Vegetarian</span>
+                    <h3 class="meal-name">Veggie Stir Fry</h3>
+                    <p class="meal-desc">Seasonal stir-fried vegetables in a savory teriyaki glaze served over steamed jasmine rice. Topped with sesame seeds.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.25</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Tuesday', 'Veggie Stir Fry', '$3.25')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wednesday -->
+        <div id="wednesday" class="menu-day">
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Pizza Day</span>
+                    <h3 class="meal-name">Pepperoni Pizza</h3>
+                    <p class="meal-desc">Two generous slices of classic pepperoni pizza on a hand-tossed crust with zesty marinara sauce and melted mozzarella cheese.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.50</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Wednesday', 'Pepperoni Pizza', '$3.50')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Main Entrée</span>
+                    <h3 class="meal-name">Chicken Tenders</h3>
+                    <p class="meal-desc">Three crispy breaded chicken tenders with your choice of dipping sauce — honey mustard, BBQ, or ranch. Served with waffle fries.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$4.00</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Wednesday', 'Chicken Tenders', '$4.00')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Salad</span>
+                    <h3 class="meal-name">Caesar Salad</h3>
+                    <p class="meal-desc">Crisp romaine lettuce with house-made Caesar dressing, shaved parmesan, and garlic croutons. A timeless lunchtime classic.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.00</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Wednesday', 'Caesar Salad', '$3.00')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thursday -->
+        <div id="thursday" class="menu-day">
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Main Entrée</span>
+                    <h3 class="meal-name">BBQ Pulled Pork Sandwich</h3>
+                    <p class="meal-desc">Slow-cooked pulled pork smothered in tangy BBQ sauce on a toasted brioche bun with creamy coleslaw. Served with kettle chips.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$4.00</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Thursday', 'BBQ Pulled Pork Sandwich', '$4.00')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Mexican</span>
+                    <h3 class="meal-name">Bean &amp; Cheese Burrito</h3>
+                    <p class="meal-desc">Hearty flour tortilla stuffed with seasoned black beans, Spanish rice, and melted cheddar cheese. Served with salsa and sour cream.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.25</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Thursday', 'Bean &amp; Cheese Burrito', '$3.25')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Comfort Food</span>
+                    <h3 class="meal-name">Tomato Soup &amp; Grilled Cheese</h3>
+                    <p class="meal-desc">Velvety homestyle tomato soup paired with a golden, buttery grilled cheese on sourdough bread. Perfect for dipping.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.50</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Thursday', 'Tomato Soup &amp; Grilled Cheese', '$3.50')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Friday -->
+        <div id="friday" class="menu-day">
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Friday Special</span>
+                    <h3 class="meal-name">Fish Tacos</h3>
+                    <p class="meal-desc">Two crispy battered fish tacos with shredded cabbage slaw, pico de gallo, and a zesty lime crema in warm corn tortillas.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.75</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Friday', 'Fish Tacos', '$3.75')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Pizza Day</span>
+                    <h3 class="meal-name">Cheese Pizza</h3>
+                    <p class="meal-desc">Two slices of classic cheese pizza on a thin, crispy crust with tangy marinara sauce and a generous layer of mozzarella cheese.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.25</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Friday', 'Cheese Pizza', '$3.25')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-card">
+                <div class="card-stripe"></div>
+                <div class="card-body">
+                    <span class="meal-tag">Sandwich</span>
+                    <h3 class="meal-name">BLT Sub</h3>
+                    <p class="meal-desc">Crispy bacon, fresh lettuce, and ripe tomato on a toasted hoagie roll spread with mayonnaise. Simple, satisfying, and delicious.</p>
+                    <div class="card-footer">
+                        <span class="meal-price">$3.75</span>
+                        <button class="quick-order-btn" onclick="goToPreorder('Friday', 'BLT Sub', '$3.75')">Order Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sides & Drinks (hidden when Make it a Meal is active) -->
+        <div class="sides-section" id="sidesRow">
+            <div class="sides-label">Sides &amp; Drinks</div>
+            <div class="sides-grid">
+                <div class="side-card">
+                    <div>
+                        <div class="side-card-name">Apple Juice</div>
+                        <div class="side-card-desc">100% pure apple juice, chilled</div>
+                    </div>
+                    <div class="side-card-price">$1.50</div>
+                </div>
+                <div class="side-card">
+                    <div>
+                        <div class="side-card-name">Chocolate Milk</div>
+                        <div class="side-card-desc">Creamy 2% chocolate milk</div>
+                    </div>
+                    <div class="side-card-price">$1.75</div>
+                </div>
+                <div class="side-card">
+                    <div>
+                        <div class="side-card-name">Chocolate Chip Cookie</div>
+                        <div class="side-card-desc">Freshly baked, warm and gooey</div>
+                    </div>
+                    <div class="side-card-price">$1.25</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Make it a Meal panel -->
+        <div id="meal-deal" class="menu-day">
+            <div class="combo-hero">
+                <div class="combo-hero-center">
+                    <h3>Complete Meal Deal</h3>
+                    <div class="combo-hero-price">$8.99</div>
+                    <div class="combo-includes" style="margin-top:0.85rem">
+                        <span class="combo-pill">&#x2713; Any Main</span>
+                        <span class="combo-pill">&#x2713; Drink</span>
+                        <span class="combo-pill">&#x2713; Cookie</span>
+                    </div>
+                    <p>Pick any main from this week's menu, choose your drink, and a fresh-baked cookie is included.</p>
+                </div>
+            </div>
+
+            <div class="combo-steps">
+                <!-- Step 1: Main -->
+                <div class="combo-step-card">
+                    <div class="combo-step-head">
+                        <div class="combo-step-num">1</div>
+                        <h4>Choose Your Main</h4>
+                    </div>
+                    <div class="combo-step-body">
+                        <select id="comboMain" class="form-control" onchange="updateComboPreview()">
+                            <option value="">— Select a meal —</option>
+                            <optgroup label="Monday">
+                                <option>Classic Cheeseburger</option>
+                                <option>Pasta Marinara</option>
+                                <option>Garden Salad Bowl</option>
+                            </optgroup>
+                            <optgroup label="Tuesday">
+                                <option>Grilled Chicken Wrap</option>
+                                <option>Macaroni &amp; Cheese</option>
+                                <option>Veggie Stir Fry</option>
+                            </optgroup>
+                            <optgroup label="Wednesday">
+                                <option>Pepperoni Pizza</option>
+                                <option>Chicken Tenders</option>
+                                <option>Caesar Salad</option>
+                            </optgroup>
+                            <optgroup label="Thursday">
+                                <option>BBQ Pulled Pork Sandwich</option>
+                                <option>Bean &amp; Cheese Burrito</option>
+                                <option>Tomato Soup &amp; Grilled Cheese</option>
+                            </optgroup>
+                            <optgroup label="Friday">
+                                <option>Fish Tacos</option>
+                                <option>Cheese Pizza</option>
+                                <option>BLT Sub</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 2: Drink -->
+                <div class="combo-step-card">
+                    <div class="combo-step-head">
+                        <div class="combo-step-num">2</div>
+                        <h4>Choose Your Drink</h4>
+                    </div>
+                    <div class="combo-step-body">
+                        <div class="combo-drink-grid">
+                            <button type="button" class="combo-drink-btn" onclick="selectDrink('Apple Juice', this)">
+                                <span class="combo-drink-icon">&#127822;</span>
+                                <span class="combo-drink-name">Apple Juice</span>
+                                <span class="combo-drink-price">$1.50</span>
+                            </button>
+                            <button type="button" class="combo-drink-btn" onclick="selectDrink('Chocolate Milk', this)">
+                                <span class="combo-drink-icon">&#129371;</span>
+                                <span class="combo-drink-name">Chocolate Milk</span>
+                                <span class="combo-drink-price">$1.75</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Cookie (always included) -->
+                <div class="combo-step-card">
+                    <div class="combo-step-head">
+                        <div class="combo-step-num">3</div>
+                        <h4>Your Cookie</h4>
+                    </div>
+                    <div class="combo-step-body">
+                        <div class="combo-cookie-box">
+                            <span class="combo-cookie-icon">&#127850;</span>
+                            <div class="combo-cookie-name">Chocolate Chip Cookie</div>
+                            <div class="combo-cookie-sub">Freshly baked &middot; Always included</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order bar -->
+            <div class="combo-order-bar">
+                <div class="combo-order-lhs">
+                    <div class="combo-order-eyebrow">Meal Deal Total</div>
+                    <div class="combo-order-price">$8.99</div>
+                    <div class="combo-preview-text" id="comboPreview">Choose your main and drink above</div>
+                </div>
+                <div>
+                    <button class="combo-preorder-btn" onclick="preorderCombo()">Preorder This Meal &rarr;</button>
+                    <div class="combo-err" id="comboErr">Please choose a main and a drink first.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cookie promo banner -->
+        <div class="cookie-promo">
+            <div class="cookie-promo-left">
+                <div class="cookie-emoji">&#127850;</div>
+                <div>
+                    <h3>Suggest a Menu Item, Win a Free Cookie!</h3>
+                    <p>Got a meal idea? Submit it — the most upvoted suggestion each week wins a free cookie from the cafeteria.</p>
+                </div>
+            </div>
+            <button class="cookie-promo-btn" onclick="showSection('suggest', document.getElementById('nav-suggest'))">Share Your Idea &rarr;</button>
+        </div>
+
+    </div>
+
+    <!-- ── PREORDER SECTION ───────────────────────────────── -->
+    <div id="preorder" class="section">
+        <div class="section-header">
+            <h2>Place a <em>Preorder</em></h2>
+            <p>Order ahead and skip the lunch line — pick up at the counter</p>
+            <div class="section-divider"></div>
+        </div>
+
+        <div class="preorder-wrap">
+            <div class="form-card">
+
+                <div class="form-card-head">
+                    <h3>Meal Preorder Form</h3>
+                    <p>All fields are required to submit your order</p>
+                </div>
+
+                <div class="form-body">
+                    <form id="preorderForm" novalidate>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" class="form-control" placeholder="Jane" autocomplete="given-name">
+                                <span class="err-msg" id="errFirstName">Please enter your first name.</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" class="form-control" placeholder="Smith" autocomplete="family-name">
+                                <span class="err-msg" id="errLastName">Please enter your last name.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="daySelect">Day</label>
+                            <select id="daySelect" class="form-control" onchange="populateMeals()">
+                                <option value="">— Choose a day —</option>
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                            </select>
+                            <span class="err-msg" id="errDay">Please select a day.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mealSelect">Meal</label>
+                            <select id="mealSelect" class="form-control" disabled>
+                                <option value="">— Choose a day first —</option>
+                            </select>
+                            <span class="err-msg" id="errMeal">Please select a meal.</span>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Place My Order &rarr;</button>
+                    </form>
+
+                    <!-- Confirmation State -->
+                    <div class="confirmation" id="confirmation">
+                        <div class="confirm-check">&#10003;</div>
+                        <h3>Order Confirmed!</h3>
+                        <p>Your preorder has been received. Pick up at the cafeteria counter during lunch.</p>
+                        <div class="confirm-table" id="confirmTable"></div>
+                        <button class="reset-btn" onclick="resetForm()">Place Another Order</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ── INFO / NUTRITION SECTION ─────────────────────────── -->
+    <div id="info" class="section">
+        <div class="section-header">
+            <h2>Nutrition <em>Guide</em></h2>
+            <p>Dietary information for all weekly menu items</p>
+            <div class="section-divider"></div>
+        </div>
+
+        <div class="info-grid">
+
+            <!-- Gluten-Free -->
+            <div class="info-card">
+                <div class="info-card-head">
+                    <div class="info-icon">GF</div>
+                    <div>
+                        <h3>Gluten-Free Options</h3>
+                        <p>Contains no wheat, barley, or rye</p>
+                    </div>
+                </div>
+                <ul class="info-list">
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Garden Salad Bowl</div>
+                            <div class="info-meal-day">Monday</div>
+                            <div class="info-meal-note">Request without croutons</div>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Veggie Stir Fry</div>
+                            <div class="info-meal-day">Tuesday</div>
+                            <div class="info-meal-note">Request gluten-free soy sauce</div>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Caesar Salad</div>
+                            <div class="info-meal-day">Wednesday</div>
+                            <div class="info-meal-note">Request without croutons</div>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Fish Tacos</div>
+                            <div class="info-meal-day">Friday</div>
+                            <div class="info-meal-note">Served on corn tortillas</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Vegan -->
+            <div class="info-card">
+                <div class="info-card-head">
+                    <div class="info-icon">V</div>
+                    <div>
+                        <h3>Vegan Options</h3>
+                        <p>No meat, dairy, or animal products</p>
+                    </div>
+                </div>
+                <ul class="info-list">
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Garden Salad Bowl</div>
+                            <div class="info-meal-day">Monday</div>
+                            <div class="info-meal-note">Request balsamic dressing &amp; no croutons</div>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Pasta Marinara</div>
+                            <div class="info-meal-day">Monday</div>
+                            <div class="info-meal-note">Request without butter on garlic bread</div>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Veggie Stir Fry</div>
+                            <div class="info-meal-day">Tuesday</div>
+                            <div class="info-meal-note">Fully plant-based</div>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Bean &amp; Cheese Burrito</div>
+                            <div class="info-meal-day">Thursday</div>
+                            <div class="info-meal-note">Request without cheese &amp; sour cream</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Healthy Picks -->
+            <div class="info-card">
+                <div class="info-card-head">
+                    <div class="info-icon">&#10003;</div>
+                    <div>
+                        <h3>Healthy Picks</h3>
+                        <p>High protein, low-fat, or nutrient-rich</p>
+                    </div>
+                </div>
+                <ul class="info-list">
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Garden Salad Bowl</div>
+                            <div class="info-meal-day">Monday · ~220 cal</div>
+                            <div class="info-meal-note">High in fibre &amp; vitamins</div>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Grilled Chicken Wrap</div>
+                            <div class="info-meal-day">Tuesday · ~420 cal</div>
+                            <div class="info-meal-note">High protein, lean meat</div>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Veggie Stir Fry</div>
+                            <div class="info-meal-day">Tuesday · ~380 cal</div>
+                            <div class="info-meal-note">Rich in vitamins &amp; minerals</div>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Caesar Salad</div>
+                            <div class="info-meal-day">Wednesday · ~290 cal</div>
+                            <div class="info-meal-note">Low calorie, good source of calcium</div>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-dot"></div>
+                        <div class="info-item-content">
+                            <div class="info-meal-name">Fish Tacos</div>
+                            <div class="info-meal-day">Friday · ~390 cal</div>
+                            <div class="info-meal-note">Omega-3 rich, high protein</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <p class="info-disclaimer">
+            <strong>Please note:</strong> Nutritional information is approximate and based on standard recipes. Calorie counts may vary. Students with severe allergies should speak directly with cafeteria staff before ordering. Ingredients and preparation methods may change without notice.
+        </p>
+
+    </div>
+
+    <!-- ── SUGGEST SECTION ───────────────────────────────── -->
+    <div id="suggest" class="section">
+        <div class="section-header">
+            <h2>Suggest a <em>Menu Item</em></h2>
+            <p>The most upvoted idea each week wins a free cookie &#127850;</p>
+            <div class="section-divider"></div>
+        </div>
+
+        <div class="suggest-layout">
+
+            <!-- Submission form -->
+            <div class="suggest-form-card">
+                <div class="suggest-form-head">
+                    <span class="cookie-big">&#127850;</span>
+                    <h3>Win a Free Cookie!</h3>
+                    <p>Submit your idea below. Top vote every Friday wins.</p>
+                </div>
+                <div class="suggest-form-body">
+                    <form id="suggestForm" novalidate>
+                        <div class="form-group">
+                            <label for="suggestMeal" class="form-group">Meal Idea <span style="color:var(--red)">*</span></label>
+                            <input type="text" id="suggestMeal" class="form-control" placeholder="e.g. Butter Chicken with Rice" maxlength="80">
+                            <span class="err-msg" id="errSuggestMeal">Please enter a meal name.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="suggestDesc">Description <span style="font-weight:400;color:var(--gray-dark)">(optional)</span></label>
+                            <textarea id="suggestDesc" class="form-control" rows="3" placeholder="Describe the meal, what makes it great..." maxlength="200" style="resize:vertical;font-family:inherit"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="suggestName">Your Name <span style="font-weight:400;color:var(--gray-dark)">(optional)</span></label>
+                            <input type="text" id="suggestName" class="form-control" placeholder="Anonymous" maxlength="40">
+                        </div>
+                        <button type="submit" class="suggest-submit-btn">Submit My Idea &#127850;</button>
+                    </form>
+                    <div class="suggest-success" id="suggestSuccess">
+                        <span class="cookie-big">&#127850;</span>
+                        <h4>Idea Submitted!</h4>
+                        <p>Your suggestion has been added. Get your friends to upvote it to win!</p>
+                        <button class="suggest-again-btn" onclick="resetSuggestForm()">Submit Another Idea</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggestions feed -->
+            <div>
+                <div class="suggestions-header">
+                    <h3>Student Ideas</h3>
+                    <span id="suggestionCount">0 ideas</span>
+                </div>
+                <div id="suggestionsList"></div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+<!-- ══ FOOTER ══════════════════════════════════════════════ -->
+<footer>
+    <p><strong>Parry Sound High School Cafeteria</strong> &nbsp;·&nbsp; Open Mon–Fri &nbsp;·&nbsp; 11:00 AM – 1:00 PM</p>
+    <p>Questions? Visit the cafeteria office or call extension 204</p>
+</footer>
+
+<script>
+    // ── Meal data ──────────────────────────────────────────────
+    const MEALS = {
+        Monday:    [
+            { name: 'Classic Cheeseburger',       price: '$3.50' },
+            { name: 'Pasta Marinara',              price: '$3.25' },
+            { name: 'Garden Salad Bowl',           price: '$2.75' },
+        ],
+        Tuesday:   [
+            { name: 'Grilled Chicken Wrap',        price: '$3.75' },
+            { name: 'Macaroni & Cheese',           price: '$3.00' },
+            { name: 'Veggie Stir Fry',             price: '$3.25' },
+        ],
+        Wednesday: [
+            { name: 'Pepperoni Pizza',             price: '$3.50' },
+            { name: 'Chicken Tenders',             price: '$4.00' },
+            { name: 'Caesar Salad',                price: '$3.00' },
+        ],
+        Thursday:  [
+            { name: 'BBQ Pulled Pork Sandwich',    price: '$4.00' },
+            { name: 'Bean & Cheese Burrito',       price: '$3.25' },
+            { name: 'Tomato Soup & Grilled Cheese',price: '$3.50' },
+        ],
+        Friday:    [
+            { name: 'Fish Tacos',                  price: '$3.75' },
+            { name: 'Cheese Pizza',                price: '$3.25' },
+            { name: 'BLT Sub',                     price: '$3.75' },
+        ],
+    };
+
+    // ── Navigation ─────────────────────────────────────────────
+    function showSection(id, btn) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showDay(day, btn) {
+        document.querySelectorAll('.menu-day').forEach(d => d.classList.remove('active'));
+        document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(day).classList.add('active');
+        btn.classList.add('active');
+        const isDeal = day === 'meal-deal';
+        document.getElementById('sidesRow').style.display    = isDeal ? 'none' : '';
+        document.querySelector('.cookie-promo').style.display = isDeal ? 'none' : '';
+    }
+
+    // ── Make it a Meal combo builder ──────────────────────────
+    let selectedDrink = null;
+
+    function selectDrink(name, btn) {
+        selectedDrink = name;
+        document.querySelectorAll('.combo-drink-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateComboPreview();
+    }
+
+    function updateComboPreview() {
+        const mainEl  = document.getElementById('comboMain');
+        const preview = document.getElementById('comboPreview');
+        const main    = mainEl.value || null;
+        const parts   = [];
+        if (main)          parts.push(main);
+        if (selectedDrink) parts.push(selectedDrink);
+        parts.push('Chocolate Chip Cookie');
+        preview.textContent = parts.length > 1 ? parts.join(' + ') : 'Choose your main and drink above';
+    }
+
+    function preorderCombo() {
+        const mainEl = document.getElementById('comboMain');
+        const errEl  = document.getElementById('comboErr');
+        errEl.classList.remove('show');
+        if (!mainEl.value || !selectedDrink) { errEl.classList.add('show'); return; }
+        const optgroup = mainEl.options[mainEl.selectedIndex].closest('optgroup');
+        const day      = optgroup ? optgroup.label : 'Monday';
+        goToPreorder(day, mainEl.value, '$8.99');
+    }
+
+    // ── "Order Now" shortcut from menu cards ──────────────────
+    function goToPreorder(day, mealName, price) {
+        // Switch to preorder tab
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('preorder').classList.add('active');
+        document.getElementById('nav-preorder').classList.add('active');
+
+        // Pre-fill day
+        const dayEl = document.getElementById('daySelect');
+        dayEl.value = day;
+        populateMeals();
+
+        // Pre-select the matching meal
+        const mealEl = document.getElementById('mealSelect');
+        Array.from(mealEl.options).forEach(opt => {
+            if (opt.dataset.name === mealName) mealEl.value = opt.value;
+        });
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── Populate meal dropdown based on selected day ──────────
+    function populateMeals() {
+        const day     = document.getElementById('daySelect').value;
+        const mealEl  = document.getElementById('mealSelect');
+
+        mealEl.innerHTML = '';
+        if (!day) {
+            mealEl.innerHTML = '<option value="">— Choose a day first —</option>';
+            mealEl.disabled  = true;
+            return;
+        }
+
+        mealEl.disabled = false;
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = '— Choose a meal —';
+        mealEl.appendChild(placeholder);
+
+        MEALS[day].forEach((meal, i) => {
+            const opt = document.createElement('option');
+            opt.value         = i;          // index as value
+            opt.dataset.name  = meal.name;
+            opt.dataset.price = meal.price;
+            opt.textContent   = `${meal.name} — ${meal.price}`;
+            mealEl.appendChild(opt);
+        });
+    }
+
+    // ── Form submission & validation ──────────────────────────
+    document.getElementById('preorderForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const firstName = document.getElementById('firstName');
+        const lastName  = document.getElementById('lastName');
+        const dayEl     = document.getElementById('daySelect');
+        const mealEl    = document.getElementById('mealSelect');
+        let valid       = true;
+
+        // Reset previous errors
+        [firstName, lastName, dayEl, mealEl].forEach(el => el.classList.remove('error'));
+        document.querySelectorAll('.err-msg').forEach(m => m.classList.remove('show'));
+
+        if (!firstName.value.trim()) {
+            firstName.classList.add('error');
+            document.getElementById('errFirstName').classList.add('show');
+            valid = false;
+        }
+        if (!lastName.value.trim()) {
+            lastName.classList.add('error');
+            document.getElementById('errLastName').classList.add('show');
+            valid = false;
+        }
+        if (!dayEl.value) {
+            dayEl.classList.add('error');
+            document.getElementById('errDay').classList.add('show');
+            valid = false;
+        }
+        if (!mealEl.value) {
+            mealEl.classList.add('error');
+            document.getElementById('errMeal').classList.add('show');
+            valid = false;
+        }
+
+        if (!valid) return;
+
+        // Gather data
+        const selectedOption = mealEl.options[mealEl.selectedIndex];
+        const mealName  = selectedOption.dataset.name;
+        const mealPrice = selectedOption.dataset.price;
+        const fullName  = `${firstName.value.trim()} ${lastName.value.trim()}`;
+        const day       = dayEl.value;
+
+        // Build confirmation table
+        const table = document.getElementById('confirmTable');
+        table.innerHTML = [
+            ['Student Name', fullName,    ''],
+            ['Day',          day,         ''],
+            ['Meal',         mealName,    ''],
+            ['Price',        mealPrice,   'red'],
+        ].map(([label, value, cls]) => `
+            <div class="confirm-row">
+                <span class="confirm-label">${label}</span>
+                <span class="confirm-value ${cls}">${value}</span>
+            </div>
+        `).join('');
+
+        // Show confirmation, hide form
+        this.style.display = 'none';
+        document.getElementById('confirmation').classList.add('show');
+    });
+
+    // ── Reset form ────────────────────────────────────────────
+    function resetForm() {
+        const form = document.getElementById('preorderForm');
+        form.reset();
+        form.style.display = '';
+        document.getElementById('confirmation').classList.remove('show');
+
+        // Reset meal dropdown
+        const mealEl = document.getElementById('mealSelect');
+        mealEl.innerHTML = '<option value="">— Choose a day first —</option>';
+        mealEl.disabled  = true;
+
+        // Clear error states
+        document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+        document.querySelectorAll('.err-msg').forEach(m => m.classList.remove('show'));
+    }
+
+    // ── Suggestions (localStorage) ────────────────────────────
+    const STORAGE_KEY   = 'pshs_suggestions';
+    const VOTED_KEY     = 'pshs_voted';
+
+    const SEED_SUGGESTIONS = [
+        { id: 1, meal: 'Butter Chicken with Rice',    desc: 'Creamy tomato-based curry over basmati rice — so good!', author: 'Jamie T.',  votes: 14 },
+        { id: 2, meal: 'Loaded Nachos',               desc: 'Tortilla chips with cheese, jalapeños, and sour cream.',  author: 'Alex M.',  votes: 11 },
+        { id: 3, meal: 'Acai Bowl',                   desc: 'Fresh acai blend topped with granola and mixed fruit.',   author: 'Sam K.',   votes:  8 },
+        { id: 4, meal: 'Poutine',                     desc: 'Fries, cheese curds, and rich beef gravy. Canadian classic!', author: 'Riley B.', votes: 19 },
+    ];
+
+    function loadSuggestions() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (!stored) {
+            saveSuggestions(SEED_SUGGESTIONS);
+            return SEED_SUGGESTIONS;
+        }
+        return JSON.parse(stored);
+    }
+
+    function saveSuggestions(list) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function loadVoted() {
+        return JSON.parse(localStorage.getItem(VOTED_KEY) || '[]');
+    }
+
+    function saveVoted(list) {
+        localStorage.setItem(VOTED_KEY, JSON.stringify(list));
+    }
+
+    function renderSuggestions() {
+        const list   = loadSuggestions().sort((a, b) => b.votes - a.votes);
+        const voted  = loadVoted();
+        const el     = document.getElementById('suggestionsList');
+        const countEl = document.getElementById('suggestionCount');
+
+        countEl.textContent = `${list.length} idea${list.length !== 1 ? 's' : ''}`;
+
+        if (list.length === 0) {
+            el.innerHTML = `<div class="empty-suggestions"><div class="empty-icon">&#127850;</div><p>No suggestions yet — be the first!</p></div>`;
+            return;
+        }
+
+        const topVotes = list[0].votes;
+        el.innerHTML = list.map((s, i) => {
+            const hasVoted  = voted.includes(s.id);
+            const isTop     = s.votes === topVotes && s.votes > 0;
+            return `
+            <div class="suggestion-card${isTop ? ' top-pick' : ''}">
+                <button class="upvote-btn${hasVoted ? ' voted' : ''}" onclick="upvote(${s.id})" ${hasVoted ? 'disabled' : ''} aria-label="Upvote">
+                    <span class="thumb">&#128077;</span>
+                    <span class="vote-count">${s.votes}</span>
+                </button>
+                <div class="suggestion-content">
+                    <div class="suggestion-meal">${escHtml(s.meal)}</div>
+                    ${s.desc ? `<div class="suggestion-desc">${escHtml(s.desc)}</div>` : ''}
+                    <div class="suggestion-meta">
+                        <span class="suggestion-author">by ${escHtml(s.author || 'Anonymous')}</span>
+                        ${isTop ? '<span class="top-badge">&#127850; Top Pick</span>' : ''}
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function upvote(id) {
+        const voted = loadVoted();
+        if (voted.includes(id)) return;
+        const list = loadSuggestions();
+        const item = list.find(s => s.id === id);
+        if (!item) return;
+        item.votes++;
+        saveSuggestions(list);
+        saveVoted([...voted, id]);
+        renderSuggestions();
+    }
+
+    function escHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    document.getElementById('suggestForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const mealEl = document.getElementById('suggestMeal');
+        const errEl  = document.getElementById('errSuggestMeal');
+        mealEl.classList.remove('error');
+        errEl.classList.remove('show');
+
+        if (!mealEl.value.trim()) {
+            mealEl.classList.add('error');
+            errEl.classList.add('show');
+            return;
+        }
+
+        const list = loadSuggestions();
+        const newSuggestion = {
+            id:     Date.now(),
+            meal:   mealEl.value.trim(),
+            desc:   document.getElementById('suggestDesc').value.trim(),
+            author: document.getElementById('suggestName').value.trim() || 'Anonymous',
+            votes:  0,
+        };
+        list.push(newSuggestion);
+        saveSuggestions(list);
+        renderSuggestions();
+
+        this.style.display = 'none';
+        document.getElementById('suggestSuccess').classList.add('show');
+    });
+
+    function resetSuggestForm() {
+        document.getElementById('suggestForm').reset();
+        document.getElementById('suggestForm').style.display = '';
+        document.getElementById('suggestSuccess').classList.remove('show');
+        document.getElementById('suggestMeal').classList.remove('error');
+        document.getElementById('errSuggestMeal').classList.remove('show');
+    }
+
+    // Render suggestions on page load
+    renderSuggestions();
+</script>
+
+</body>
+</html>
