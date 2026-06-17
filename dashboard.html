@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Dashboard</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --red:        #CC0000;
+            --red-dark:   #990000;
+            --red-light:  #ff4444;
+            --white:      #ffffff;
+            --black:      #0d0d0d;
+            --gray-light: #f5f5f5;
+            --gray:       #e0e0e0;
+            --gray-mid:   #aaaaaa;
+            --gray-dark:  #555555;
+            --shadow:     0 4px 24px rgba(0,0,0,0.14);
+            --shadow-sm:  0 2px 10px rgba(0,0,0,0.08);
+            --radius:     10px;
+            --radius-lg:  16px;
+            /* chart accent palette */
+            --c-opus:   #CC0000;
+            --c-sonnet: #1d6fb8;
+            --c-haiku:  #e6a300;
+            --c-fable:  #6c3fb5;
+            --c-other:  #777777;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--gray-light);
+            color: var(--black);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ── Header ───────────────────────────────────────── */
+        header {
+            background: var(--black);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+        }
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 68px;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .logo { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-mark {
+            width: 40px; height: 40px; border-radius: 9px;
+            background: var(--red);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1.2rem; color: var(--white);
+            flex-shrink: 0;
+        }
+        .logo-text h1 { font-size: 1rem; font-weight: 800; letter-spacing: -0.01em; }
+        .logo-text span { font-size: 0.68rem; color: var(--gray-mid); text-transform: uppercase; letter-spacing: 0.05em; }
+        .header-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+        .btn {
+            font-family: inherit;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border: none;
+            border-radius: var(--radius);
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            transition: transform .12s ease, background .15s ease, opacity .15s ease;
+        }
+        .btn-primary { background: var(--red); color: var(--white); }
+        .btn-primary:hover { background: var(--red-dark); transform: translateY(-1px); }
+        .btn-ghost { background: #1f1f1f; color: var(--white); }
+        .btn-ghost:hover { background: #2c2c2c; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        main { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+
+        /* ── Drop zone / empty state ──────────────────────── */
+        .dropzone {
+            border: 2px dashed var(--gray);
+            border-radius: var(--radius-lg);
+            background: var(--white);
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: border-color .15s ease, background .15s ease;
+            box-shadow: var(--shadow-sm);
+        }
+        .dropzone.drag { border-color: var(--red); background: #fff5f5; }
+        .dropzone h2 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+        .dropzone p { color: var(--gray-dark); max-width: 640px; margin: 0 auto 0.5rem; }
+        .dropzone .hint {
+            font-size: 0.85rem; color: var(--gray-mid);
+            margin-top: 1rem; word-break: break-all;
+        }
+        .dropzone code {
+            background: var(--gray-light); padding: 0.1rem 0.4rem;
+            border-radius: 5px; font-size: 0.85em;
+        }
+        .dropzone .cta { margin-top: 1.4rem; }
+
+        .parse-summary {
+            margin-top: 1rem; font-size: 0.85rem; color: var(--gray-dark);
+        }
+        .parse-summary .err { color: var(--red); }
+
+        /* ── Sections ─────────────────────────────────────── */
+        .section { margin-top: 2rem; }
+        .section-title {
+            font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--gray-dark);
+            margin-bottom: 0.9rem; padding-bottom: 0.4rem;
+            border-bottom: 2px solid var(--gray);
+        }
+
+        /* ── Stat cards ───────────────────────────────────── */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            position: relative;
+        }
+        .stat-card { padding: 1.2rem 1.3rem; border-top: 3px solid var(--red); }
+        .stat-card .label {
+            font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+            color: var(--gray-dark); font-weight: 700;
+        }
+        .stat-card .value { font-size: 1.85rem; font-weight: 800; line-height: 1.2; margin-top: 0.3rem; }
+        .stat-card .sub { font-size: 0.78rem; color: var(--gray-mid); margin-top: 0.15rem; }
+
+        .grid-2 {
+            display: grid; gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        }
+        .panel { padding: 1.3rem; }
+        .panel h3 { font-size: 0.95rem; font-weight: 800; margin-bottom: 1rem; }
+
+        /* ── Tables ───────────────────────────────────────── */
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--gray-light); }
+        th {
+            font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em;
+            color: var(--gray-dark); font-weight: 700;
+        }
+        td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+        tbody tr:hover { background: var(--gray-light); }
+        .tag {
+            display: inline-block; padding: 0.1rem 0.5rem; border-radius: 20px;
+            font-size: 0.72rem; font-weight: 700; color: var(--white);
+        }
+        .muted { color: var(--gray-mid); }
+
+        /* ── Bars ─────────────────────────────────────────── */
+        .bar-track { background: var(--gray-light); border-radius: 6px; height: 22px; position: relative; overflow: hidden; min-width: 60px; }
+        .bar-fill { height: 100%; border-radius: 6px; }
+        .barline { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.55rem; }
+        .barline .blabel { width: 130px; flex-shrink: 0; font-size: 0.82rem; font-weight: 600; }
+        .barline .bwrap { flex: 1; }
+        .barline .bval { width: 90px; text-align: right; font-size: 0.8rem; font-variant-numeric: tabular-nums; color: var(--gray-dark); flex-shrink: 0; }
+
+        /* time chart */
+        .timechart { display: flex; align-items: flex-end; gap: 3px; height: 160px; padding-top: 0.5rem; overflow-x: auto; }
+        .timebar-wrap { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-width: 26px; flex: 1; }
+        .timebar { width: 70%; min-width: 8px; background: var(--red); border-radius: 4px 4px 0 0; transition: opacity .15s; }
+        .timebar-wrap:hover .timebar { opacity: 0.75; }
+        .timebar-label { font-size: 0.6rem; color: var(--gray-mid); margin-top: 0.3rem; white-space: nowrap; transform: rotate(-35deg); transform-origin: top right; }
+
+        .legend { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.8rem; font-size: 0.78rem; }
+        .legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+        .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+        /* pricing controls */
+        .pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 0.8rem; margin-top: 0.5rem; }
+        .price-row { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; }
+        .price-row label { width: 64px; font-weight: 600; }
+        .price-row input {
+            width: 70px; padding: 0.3rem 0.4rem; border: 1px solid var(--gray);
+            border-radius: 6px; font-family: inherit; font-size: 0.8rem; text-align: right;
+        }
+        .note { font-size: 0.78rem; color: var(--gray-mid); margin-top: 0.6rem; }
+
+        footer { text-align: center; color: var(--gray-mid); font-size: 0.78rem; padding: 2rem 1rem; }
+        .hidden { display: none !important; }
+        input[type=file] { display: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-mark">C</div>
+                <div class="logo-text">
+                    <h1>Claude Code Dashboard</h1>
+                    <span>Usage &middot; Models &middot; Skills &middot; Activity</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-ghost" id="loadMoreBtn">Add files</button>
+                <button class="btn btn-ghost hidden" id="resetBtn">Clear</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Empty state / drop zone -->
+        <div id="dropzone" class="dropzone">
+            <h2>Drop your Claude Code transcripts here</h2>
+            <p>
+                This dashboard reads Claude Code session transcripts
+                (<code>.jsonl</code>) entirely in your browser. Nothing is uploaded —
+                your data never leaves this page.
+            </p>
+            <div class="cta">
+                <button class="btn btn-primary" id="pickBtn">Choose files</button>
+            </div>
+            <p class="hint">
+                Transcripts live in <code>~/.claude/projects/&lt;project&gt;/*.jsonl</code>.
+                You can also run <code>tools/export-claude-usage.sh</code> to gather them
+                into a single file, then drop it here. Drag &amp; drop multiple files at once.
+            </p>
+            <div class="parse-summary" id="parseSummary"></div>
+        </div>
+
+        <!-- Dashboard (hidden until data loads) -->
+        <div id="dashboard" class="hidden">
+            <div class="parse-summary" id="parseSummaryTop"></div>
+
+            <!-- Summary cards -->
+            <section class="section">
+                <div class="stat-grid" id="statGrid"></div>
+            </section>
+
+            <!-- Token usage & cost -->
+            <section class="section">
+                <div class="section-title">Token Usage &amp; Estimated Cost</div>
+                <div class="grid-2">
+                    <div class="card panel">
+                        <h3>Tokens by model</h3>
+                        <div id="tokenBars"></div>
+                    </div>
+                    <div class="card panel">
+                        <h3>Estimated cost by model (USD)</h3>
+                        <div id="costBars"></div>
+                        <div class="note">
+                            Cost is an estimate. Cache writes are billed at ~1.25&times; input,
+                            cache reads at ~0.1&times; input. Adjust rates below.
+                        </div>
+                        <div class="pricing" id="pricingControls"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tokens over time -->
+            <section class="section">
+                <div class="section-title">Activity Over Time</div>
+                <div class="card panel">
+                    <h3>Tokens per day</h3>
+                    <div class="timechart" id="tokenTime"></div>
+                </div>
+                <div class="card panel" style="margin-top:1rem;">
+                    <h3>Sessions &amp; messages per day</h3>
+                    <div class="timechart" id="sessionTime"></div>
+                </div>
+            </section>
+
+            <!-- Models breakdown -->
+            <section class="section">
+                <div class="section-title">Models</div>
+                <div class="card panel">
+                    <table id="modelTable">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th class="num">Msgs</th>
+                                <th class="num">Input</th>
+                                <th class="num">Output</th>
+                                <th class="num">Cache write</th>
+                                <th class="num">Cache read</th>
+                                <th class="num">Total tokens</th>
+                                <th class="num">Est. cost</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Skills & tools -->
+            <section class="section">
+                <div class="section-title">Skills &amp; Tools</div>
+                <div class="grid-2">
+                    <div class="card panel">
+                        <h3>Skills used</h3>
+                        <div id="skillBars"></div>
+                    </div>
+                    <div class="card panel">
+                        <h3>Tools used</h3>
+                        <div id="toolBars"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sessions & breakdowns -->
+            <section class="section">
+                <div class="section-title">Sessions, Projects &amp; Branches</div>
+                <div class="grid-2">
+                    <div class="card panel">
+                        <h3>By git branch</h3>
+                        <div id="branchBars"></div>
+                    </div>
+                    <div class="card panel">
+                        <h3>By project / entrypoint</h3>
+                        <div id="projectBars"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            All parsing happens locally in your browser. No network requests, no tracking.
+        </footer>
+    </main>
+
+    <script>
+    (function () {
+        "use strict";
+
+        // ── Pricing (USD per 1M tokens). Editable in the UI. ──────────────
+        // Source: Anthropic model pricing. Cache write = 1.25x input,
+        // cache read = 0.1x input (applied automatically).
+        var PRICING = {
+            opus:   { input: 5,  output: 25 },
+            sonnet: { input: 3,  output: 15 },
+            haiku:  { input: 1,  output: 5  },
+            fable:  { input: 10, output: 50 },
+            other:  { input: 5,  output: 25 }
+        };
+        var CACHE_WRITE_MULT = 1.25;
+        var CACHE_READ_MULT  = 0.1;
+
+        var FAMILY_COLORS = {
+            opus: getCss('--c-opus'), sonnet: getCss('--c-sonnet'),
+            haiku: getCss('--c-haiku'), fable: getCss('--c-fable'),
+            other: getCss('--c-other')
+        };
+
+        function getCss(v) {
+            return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || '#999';
+        }
+
+        // ── State ─────────────────────────────────────────────────────────
+        var records = {};        // uuid -> record (deduped)
+        var fileCount = 0;
+        var parseErrors = 0;
+
+        // ── Helpers ───────────────────────────────────────────────────────
+        function familyOf(model) {
+            if (!model) return 'other';
+            var m = model.toLowerCase();
+            if (m.indexOf('opus') >= 0) return 'opus';
+            if (m.indexOf('sonnet') >= 0) return 'sonnet';
+            if (m.indexOf('haiku') >= 0) return 'haiku';
+            if (m.indexOf('fable') >= 0 || m.indexOf('mythos') >= 0) return 'fable';
+            return 'other';
+        }
+        function fmtInt(n) { return (n || 0).toLocaleString('en-US'); }
+        function fmtTok(n) {
+            n = n || 0;
+            if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+            if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+            if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+            return String(n);
+        }
+        function fmtUsd(n) {
+            n = n || 0;
+            if (n < 0.01 && n > 0) return '$' + n.toFixed(4);
+            return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        function dayKey(ts) {
+            if (!ts) return null;
+            var d = new Date(ts);
+            if (isNaN(d)) return null;
+            return d.toISOString().slice(0, 10);
+        }
+        function esc(s) {
+            return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+            });
+        }
+
+        // ── File loading ────────────────────────────────────────────────
+        function handleFiles(fileList) {
+            var files = Array.prototype.slice.call(fileList);
+            if (!files.length) return;
+            var pending = files.length;
+            files.forEach(function (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    ingestText(String(e.target.result));
+                    fileCount++;
+                    if (--pending === 0) render();
+                };
+                reader.onerror = function () {
+                    parseErrors++;
+                    if (--pending === 0) render();
+                };
+                reader.readAsText(file);
+            });
+        }
+
+        function ingestText(text) {
+            // Support .jsonl (one object per line) and a JSON array export.
+            var trimmed = text.replace(/^﻿/, '').trim();
+            if (!trimmed) return;
+            if (trimmed.charAt(0) === '[') {
+                try {
+                    var arr = JSON.parse(trimmed);
+                    if (Array.isArray(arr)) { arr.forEach(addRecord); return; }
+                } catch (e) { /* fall through to line parsing */ }
+            }
+            var lines = trimmed.split(/\r?\n/);
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (!line) continue;
+                try { addRecord(JSON.parse(line)); }
+                catch (e) { parseErrors++; }
+            }
+        }
+
+        function addRecord(rec) {
+            if (!rec || typeof rec !== 'object') { parseErrors++; return; }
+            var key = rec.uuid || (rec.type + ':' + (rec.timestamp || '') + ':' + Math.random());
+            records[key] = rec;
+        }
+
+        // ── Aggregation ───────────────────────────────────────────────────
+        function aggregate() {
+            var list = Object.keys(records).map(function (k) { return records[k]; });
+
+            var agg = {
+                sessions: {},               // sessionId -> true
+                userMsgs: 0,
+                assistantMsgs: 0,
+                models: {},                 // model -> {family, msgs, in, out, cw, cr}
+                families: {},               // family -> totals (for cost)
+                skills: {},                 // name -> count
+                tools: {},                  // name -> count
+                branches: {},               // branch -> count (messages)
+                projects: {},               // cwd/entrypoint -> count
+                perDayTokens: {},           // day -> tokens
+                perDaySessions: {},         // day -> Set
+                perDayMsgs: {},             // day -> count
+                totals: { in: 0, out: 0, cw: 0, cr: 0 },
+                firstTs: null, lastTs: null
+            };
+
+            list.forEach(function (rec) {
+                var ts = rec.timestamp;
+                if (ts) {
+                    var t = new Date(ts).getTime();
+                    if (!isNaN(t)) {
+                        if (agg.firstTs == null || t < agg.firstTs) agg.firstTs = t;
+                        if (agg.lastTs == null || t > agg.lastTs) agg.lastTs = t;
+                    }
+                }
+                if (rec.sessionId) agg.sessions[rec.sessionId] = true;
+
+                var day = dayKey(ts);
+
+                if (rec.type === 'user') {
+                    agg.userMsgs++;
+                    if (rec.gitBranch) agg.branches[rec.gitBranch] = (agg.branches[rec.gitBranch] || 0) + 1;
+                    var proj = rec.slug || rec.cwd || rec.entrypoint || 'unknown';
+                    agg.projects[proj] = (agg.projects[proj] || 0) + 1;
+                    if (day) {
+                        agg.perDayMsgs[day] = (agg.perDayMsgs[day] || 0) + 1;
+                        if (rec.sessionId) {
+                            (agg.perDaySessions[day] = agg.perDaySessions[day] || {})[rec.sessionId] = true;
+                        }
+                    }
+                } else if (rec.type === 'assistant') {
+                    agg.assistantMsgs++;
+                    var msg = rec.message || {};
+                    var model = msg.model || 'unknown';
+                    var fam = familyOf(model);
+                    var u = msg.usage || {};
+                    var inTok = u.input_tokens || 0;
+                    var outTok = u.output_tokens || 0;
+                    var cwTok = u.cache_creation_input_tokens || 0;
+                    var crTok = u.cache_read_input_tokens || 0;
+
+                    var mm = agg.models[model] || (agg.models[model] = { family: fam, msgs: 0, in: 0, out: 0, cw: 0, cr: 0 });
+                    mm.msgs++; mm.in += inTok; mm.out += outTok; mm.cw += cwTok; mm.cr += crTok;
+
+                    var ff = agg.families[fam] || (agg.families[fam] = { in: 0, out: 0, cw: 0, cr: 0 });
+                    ff.in += inTok; ff.out += outTok; ff.cw += cwTok; ff.cr += crTok;
+
+                    agg.totals.in += inTok; agg.totals.out += outTok;
+                    agg.totals.cw += cwTok; agg.totals.cr += crTok;
+
+                    if (day) agg.perDayTokens[day] = (agg.perDayTokens[day] || 0) + inTok + outTok + cwTok + crTok;
+
+                    // tool & skill tallies from content blocks
+                    var content = msg.content;
+                    if (Array.isArray(content)) {
+                        content.forEach(function (block) {
+                            if (block && block.type === 'tool_use') {
+                                var name = block.name || 'unknown';
+                                agg.tools[name] = (agg.tools[name] || 0) + 1;
+                                if (name === 'Skill') {
+                                    var inp = block.input || {};
+                                    var skill = inp.skill || inp.command || inp.name || 'unknown';
+                                    agg.skills[skill] = (agg.skills[skill] || 0) + 1;
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            return agg;
+        }
+
+        function costForFamily(fam, t) {
+            var p = PRICING[fam] || PRICING.other;
+            return (t.in * p.input
+                  + t.out * p.output
+                  + t.cw * p.input * CACHE_WRITE_MULT
+                  + t.cr * p.input * CACHE_READ_MULT) / 1e6;
+        }
+
+        // ── Rendering ─────────────────────────────────────────────────────
+        function render() {
+            updateSummaryText();
+            if (!Object.keys(records).length) return;
+
+            document.getElementById('dropzone').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('resetBtn').classList.remove('hidden');
+
+            var agg = aggregate();
+
+            renderStats(agg);
+            renderPricingControls();
+            renderTokenBars(agg);
+            renderCostBars(agg);
+            renderTimeChart('tokenTime', agg.perDayTokens, function (v) { return fmtTok(v); });
+            renderSessionTime(agg);
+            renderModelTable(agg);
+            renderCountBars('skillBars', agg.skills, 'No skill invocations found.');
+            renderCountBars('toolBars', agg.tools, 'No tool calls found.');
+            renderCountBars('branchBars', agg.branches, 'No branch data.');
+            renderCountBars('projectBars', agg.projects, 'No project data.');
+        }
+
+        function updateSummaryText() {
+            var n = Object.keys(records).length;
+            var msg = fileCount + ' file' + (fileCount === 1 ? '' : 's') + ' loaded · '
+                    + fmtInt(n) + ' records'
+                    + (parseErrors ? ' · <span class="err">' + parseErrors + ' line(s) skipped</span>' : '');
+            document.getElementById('parseSummary').innerHTML = n ? msg : '';
+            document.getElementById('parseSummaryTop').innerHTML = msg;
+        }
+
+        function renderStats(agg) {
+            var totalTok = agg.totals.in + agg.totals.out + agg.totals.cw + agg.totals.cr;
+            var totalCost = 0;
+            Object.keys(agg.families).forEach(function (fam) {
+                totalCost += costForFamily(fam, agg.families[fam]);
+            });
+            var span = '';
+            if (agg.firstTs && agg.lastTs) {
+                span = dayKey(agg.firstTs) + ' → ' + dayKey(agg.lastTs);
+            }
+            var cards = [
+                { label: 'Sessions', value: fmtInt(Object.keys(agg.sessions).length), sub: span },
+                { label: 'Messages', value: fmtInt(agg.userMsgs + agg.assistantMsgs), sub: fmtInt(agg.userMsgs) + ' user · ' + fmtInt(agg.assistantMsgs) + ' assistant' },
+                { label: 'Total tokens', value: fmtTok(totalTok), sub: fmtInt(totalTok) },
+                { label: 'Est. cost', value: fmtUsd(totalCost), sub: 'across all models' },
+                { label: 'Input tokens', value: fmtTok(agg.totals.in), sub: 'cache read ' + fmtTok(agg.totals.cr) },
+                { label: 'Output tokens', value: fmtTok(agg.totals.out), sub: 'cache write ' + fmtTok(agg.totals.cw) }
+            ];
+            document.getElementById('statGrid').innerHTML = cards.map(function (c) {
+                return '<div class="card stat-card">'
+                    + '<div class="label">' + c.label + '</div>'
+                    + '<div class="value">' + c.value + '</div>'
+                    + '<div class="sub">' + (c.sub || '') + '</div></div>';
+            }).join('');
+        }
+
+        function renderPricingControls() {
+            var fams = ['opus', 'sonnet', 'haiku', 'fable'];
+            var html = fams.map(function (f) {
+                var p = PRICING[f];
+                return '<div class="price-row">'
+                    + '<label>' + f + '</label>'
+                    + 'in <input type="number" step="0.1" min="0" data-fam="' + f + '" data-k="input" value="' + p.input + '">'
+                    + 'out <input type="number" step="0.1" min="0" data-fam="' + f + '" data-k="output" value="' + p.output + '">'
+                    + '</div>';
+            }).join('');
+            var el = document.getElementById('pricingControls');
+            el.innerHTML = html;
+            el.querySelectorAll('input').forEach(function (inp) {
+                inp.addEventListener('change', function () {
+                    var fam = inp.getAttribute('data-fam');
+                    var k = inp.getAttribute('data-k');
+                    var v = parseFloat(inp.value);
+                    if (!isNaN(v) && v >= 0) { PRICING[fam][k] = v; render(); }
+                });
+            });
+        }
+
+        function barRows(entries, total, colorFn, valueFn) {
+            if (!entries.length) return '<p class="muted">No data.</p>';
+            return entries.map(function (e) {
+                var pct = total > 0 ? (e.value / total * 100) : 0;
+                var color = colorFn ? colorFn(e) : 'var(--red)';
+                return '<div class="barline">'
+                    + '<div class="blabel" title="' + esc(e.key) + '">' + esc(e.key) + '</div>'
+                    + '<div class="bwrap"><div class="bar-track">'
+                    + '<div class="bar-fill" style="width:' + Math.max(pct, 1.5) + '%;background:' + color + '"></div>'
+                    + '</div></div>'
+                    + '<div class="bval">' + (valueFn ? valueFn(e.value) : fmtInt(e.value)) + '</div>'
+                    + '</div>';
+            }).join('');
+        }
+
+        function renderTokenBars(agg) {
+            var entries = Object.keys(agg.models).map(function (m) {
+                var mm = agg.models[m];
+                return { key: m, value: mm.in + mm.out + mm.cw + mm.cr, family: mm.family };
+            }).sort(function (a, b) { return b.value - a.value; });
+            var max = entries.length ? entries[0].value : 0;
+            document.getElementById('tokenBars').innerHTML =
+                barRows(entries, max, function (e) { return FAMILY_COLORS[e.family]; }, fmtTok);
+        }
+
+        function renderCostBars(agg) {
+            var entries = Object.keys(agg.models).map(function (m) {
+                var mm = agg.models[m];
+                return { key: m, value: costForFamily(mm.family, mm), family: mm.family };
+            }).sort(function (a, b) { return b.value - a.value; });
+            var max = entries.length ? entries[0].value : 0;
+            document.getElementById('costBars').innerHTML =
+                barRows(entries, max, function (e) { return FAMILY_COLORS[e.family]; }, fmtUsd);
+        }
+
+        function renderCountBars(elId, map, emptyMsg) {
+            var entries = Object.keys(map).map(function (k) { return { key: k, value: map[k] }; })
+                .sort(function (a, b) { return b.value - a.value; }).slice(0, 15);
+            var el = document.getElementById(elId);
+            if (!entries.length) { el.innerHTML = '<p class="muted">' + emptyMsg + '</p>'; return; }
+            var max = entries[0].value;
+            el.innerHTML = barRows(entries, max, null, fmtInt);
+        }
+
+        function renderTimeChart(elId, map, valueFn) {
+            var days = Object.keys(map).sort();
+            var el = document.getElementById(elId);
+            if (!days.length) { el.innerHTML = '<p class="muted">No timestamped data.</p>'; return; }
+            var max = 0;
+            days.forEach(function (d) { if (map[d] > max) max = map[d]; });
+            el.innerHTML = days.map(function (d) {
+                var h = max > 0 ? (map[d] / max * 130) : 0;
+                return '<div class="timebar-wrap" title="' + d + ': ' + valueFn(map[d]) + '">'
+                    + '<div class="timebar" style="height:' + Math.max(h, 2) + 'px"></div>'
+                    + '<div class="timebar-label">' + d.slice(5) + '</div></div>';
+            }).join('');
+        }
+
+        function renderSessionTime(agg) {
+            var days = Object.keys(agg.perDayMsgs).sort();
+            var el = document.getElementById('sessionTime');
+            if (!days.length) { el.innerHTML = '<p class="muted">No timestamped data.</p>'; return; }
+            var max = 0;
+            days.forEach(function (d) { if (agg.perDayMsgs[d] > max) max = agg.perDayMsgs[d]; });
+            el.innerHTML = days.map(function (d) {
+                var msgs = agg.perDayMsgs[d];
+                var sess = agg.perDaySessions[d] ? Object.keys(agg.perDaySessions[d]).length : 0;
+                var h = max > 0 ? (msgs / max * 130) : 0;
+                return '<div class="timebar-wrap" title="' + d + ': ' + msgs + ' msgs, ' + sess + ' session(s)">'
+                    + '<div class="timebar" style="height:' + Math.max(h, 2) + 'px;background:var(--c-sonnet)"></div>'
+                    + '<div class="timebar-label">' + d.slice(5) + '</div></div>';
+            }).join('');
+        }
+
+        function renderModelTable(agg) {
+            var rows = Object.keys(agg.models).map(function (m) {
+                var mm = agg.models[m];
+                var tot = mm.in + mm.out + mm.cw + mm.cr;
+                return { model: m, mm: mm, tot: tot, cost: costForFamily(mm.family, mm) };
+            }).sort(function (a, b) { return b.tot - a.tot; });
+
+            var body = document.querySelector('#modelTable tbody');
+            if (!rows.length) { body.innerHTML = '<tr><td colspan="8" class="muted">No assistant messages found.</td></tr>'; return; }
+            body.innerHTML = rows.map(function (r) {
+                var color = FAMILY_COLORS[r.mm.family];
+                return '<tr>'
+                    + '<td><span class="tag" style="background:' + color + '">' + esc(r.model) + '</span></td>'
+                    + '<td class="num">' + fmtInt(r.mm.msgs) + '</td>'
+                    + '<td class="num">' + fmtTok(r.mm.in) + '</td>'
+                    + '<td class="num">' + fmtTok(r.mm.out) + '</td>'
+                    + '<td class="num">' + fmtTok(r.mm.cw) + '</td>'
+                    + '<td class="num">' + fmtTok(r.mm.cr) + '</td>'
+                    + '<td class="num">' + fmtTok(r.tot) + '</td>'
+                    + '<td class="num">' + fmtUsd(r.cost) + '</td>'
+                    + '</tr>';
+            }).join('');
+        }
+
+        // ── Wiring ──────────────────────────────────────────────────────
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.multiple = true;
+        fileInput.accept = '.jsonl,.json,.txt';
+        document.body.appendChild(fileInput);
+        fileInput.addEventListener('change', function () {
+            handleFiles(fileInput.files);
+            fileInput.value = '';
+        });
+
+        function openPicker() { fileInput.click(); }
+        document.getElementById('pickBtn').addEventListener('click', openPicker);
+        document.getElementById('loadMoreBtn').addEventListener('click', openPicker);
+
+        document.getElementById('resetBtn').addEventListener('click', function () {
+            records = {}; fileCount = 0; parseErrors = 0;
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('dropzone').classList.remove('hidden');
+            document.getElementById('resetBtn').classList.add('hidden');
+            updateSummaryText();
+        });
+
+        // Drag & drop on the whole window
+        var dz = document.getElementById('dropzone');
+        ['dragenter', 'dragover'].forEach(function (ev) {
+            window.addEventListener(ev, function (e) {
+                e.preventDefault(); dz.classList.add('drag');
+            });
+        });
+        ['dragleave', 'drop'].forEach(function (ev) {
+            window.addEventListener(ev, function (e) {
+                e.preventDefault();
+                if (ev === 'dragleave' && e.relatedTarget) return;
+                dz.classList.remove('drag');
+            });
+        });
+        window.addEventListener('drop', function (e) {
+            e.preventDefault();
+            dz.classList.remove('drag');
+            if (e.dataTransfer && e.dataTransfer.files) handleFiles(e.dataTransfer.files);
+        });
+    })();
+    </script>
+</body>
+</html>
