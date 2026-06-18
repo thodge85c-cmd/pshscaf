@@ -1,0 +1,3 @@
+# Generated Claude Code usage exports (see tools/export-claude-usage.sh)
+claude-usage.jsonl
+claude-usage*.jsonl
