@@ -1,25 +1,9 @@
-plugins = []
-headers = []
-redirects = []
-
-[functions]
-
-  [functions."*"]
-
 [build]
 publish = "."
-publishOrigin = "config"
 
-  [build.environment]
-
-  [build.processing]
-
-    [build.processing.css]
-
-    [build.processing.html]
-
-    [build.processing.images]
-
-    [build.processing.js]
-
-  [build.services]
+# Serve the Claude Code dashboard as the site's landing page.
+[[redirects]]
+from = "/"
+to = "/dashboard.html"
+status = 200
+force = true
