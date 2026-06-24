@@ -7,7 +7,7 @@ redirects = []
   [functions."*"]
 
 [build]
-publish = "/Users/Student2/cousans"
+publish = "."
 publishOrigin = "config"
 
   [build.environment]
